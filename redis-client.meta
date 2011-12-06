@@ -1,0 +1,5 @@
+((license "BSD")
+ (category "db")
+ (needs socket)
+ (author "A. Carl Douglas")
+ (synopsis "A redis client library.")
