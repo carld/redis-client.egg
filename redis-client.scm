@@ -27,10 +27,3 @@
       ((close) (socket-close local-socket))
       (else (xfer command args)))))
 
-(define test-client (make-redis-client "127.0.0.1" 6379))
-(pp (test-client 'ping))
-(pp (test-client 'keys "*"))
-(pp (test-client 'lpush "scheme-test" "1234"))
-(pp (test-client 'rpop "scheme-test"))
-(test-client 'close)
-

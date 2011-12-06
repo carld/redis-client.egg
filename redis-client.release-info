@@ -1,3 +1,3 @@
-(repo git "git://github.com/carld/{egg-name}.git")
-(uri targz "https://github.com/carld/redis-client/tarball/{egg-name}")
+(repo git "git://github.com/carld/{egg-name}.egg.git")
+(uri targz "https://github.com/carld/redis-client.egg/tarball/{egg-name}-{egg-release}.tar.gz")
 (release "0.0")
