@@ -1,3 +1,5 @@
+(include "../redis-client.scm")
+
 (define test-client (make-redis-client "127.0.0.1" 6379))
 (pp (test-client 'ping))
 (pp (test-client 'keys "*"))
