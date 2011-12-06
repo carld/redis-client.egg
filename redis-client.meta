@@ -1,5 +1,5 @@
 ((license "BSD")
- (category "db")
- (needs socket)
+ (category db)
+ (depends socket)
  (author "A. Carl Douglas")
- (synopsis "A redis client library.")
+ (synopsis "A redis client library."))
