@@ -8,11 +8,11 @@
 (define client (make-redis-client "127.0.0.1" 6379))
 
 (test (client 'ping) 
-      '("+PONG"))
+      '("PONG"))
 (test (client 'lpush "scheme-test" "1234") 
-      '(":1"))
+      '("1"))
 (test (client 'rpop "scheme-test") 
-      '("$4" "1234"))
+      '("1234"))
 
 (client 'close)
 

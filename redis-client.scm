@@ -13,7 +13,21 @@
                      (sprintf "$~A\r\n~A\r\n" (string-length arg) arg)) args))))
 
 (define (format-response reply)
-  (string-split reply "\r\n"))
+  (with-input-from-string reply 
+    (lambda()
+      (letrec ((parse (lambda(argc args)
+                  (let ((ch (read-char)))
+                    (if (eof-object? ch)
+                      args
+                      (case ch
+                        ((#\+) (parse argc (cons (read-line) args)))
+                        ((#\*) (parse (read-line) args))
+                        ((#\:) (parse argc (cons (read-line) args)))
+                        ((#\$) (let ((l (read-line)))
+                                 (parse argc (cons (read-string (string->number l)) args))))
+                        ((#\return) args)
+                        (else (error "unrecognised prefix" ch))))))))
+               (parse 0 '())))))
 
 (define (make-redis-client host port)
   (define local-socket 
