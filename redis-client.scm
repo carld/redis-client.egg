@@ -16,7 +16,6 @@
   (with-input-from-string reply 
     (lambda()
       (letrec ((parse (lambda(argc args)
-
                   (let ((ch (read-char)))
                     (if (or (null? ch) (eof-object? ch))
                       args
@@ -25,7 +24,7 @@
                         ((#\*) (parse (read-line) args))
                         ((#\:) (parse argc (append args (list (read-line)))))
                         ((#\$) (let ((l (read-line)))
-                                 (if (equal? "-1" l)
+                                 (if (> 0 (string->number l))
                                    #f
                                    (parse argc (append args (list (read-string (string->number l))))))))
                         ((#\return) (parse argc args))
