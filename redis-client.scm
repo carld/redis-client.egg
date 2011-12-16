@@ -38,7 +38,7 @@
   (define (xfer command args)
     (begin
       (socket-send local-socket (format-command command args))
-      (format-response (socket-receive local-socket 4096))))
+      (format-response (socket-receive local-socket 1048576))))
   (lambda (command . args)
     (case command
       ((close) (socket-close local-socket))
