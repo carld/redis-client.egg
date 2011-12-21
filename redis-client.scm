@@ -2,7 +2,7 @@
 ; Copyright (C) 2011 A. Carl Douglas
 (use socket)
 
-(define (write-command port command args)
+(define (redis-write-command port command args)
   (fprintf port "*~A\r\n$~A\r\n~A\r\n~A~!" 
             (+ 1 (length args))
             (string-length (symbol->string command))
@@ -11,7 +11,7 @@
               (map (lambda(arg)
                      (sprintf "$~A\r\n~A\r\n" (string-length arg) arg)) args))))
 
-(define (read-response port)
+(define (redis-read-response port)
   (letrec ((parse (lambda(argc args)
              (if (= argc 0)
                args
@@ -35,19 +35,19 @@
     (define-values (i o) (socket-i/o-ports redis-socket))
     (define (xfer command args)
       (begin
-        (write-command o command args)
-        (read-response i)))
+        (redis-write-command o command args)
+        (redis-read-response i)))
     (lambda (command . args)
       (case command
         ((close) (socket-close redis-socket))
         (else (xfer command args))))))
 
 (define-syntax make-redis-function
-  (syntax-rules ()
-                ((_ command) 
-                    (define (command . args)
-                       (write-command (current-output-port) 'command args)
-                       (read-response (current-input-port))) )))
+  (lambda (x r c)
+    (let ((command-proc (r (string->symbol(sprintf "redis-~A" (cadr x))))))
+      `(define (,command-proc . args)
+                 (redis-write-command (current-output-port) ',(cadr x) args)
+                 (redis-read-response (current-input-port))) )))
 
 ; Example program:
 ;
@@ -55,7 +55,11 @@
 ;(define *redis-socket* 
 ;  (socket-connect/ai (address-information "127.0.0.1" 6379 family: af/inet)))
 ;(define-values (i o) (socket-i/o-ports *redis-socket*))
+;(define stdin (current-input-port))
+;(define stdout (current-output-port))
 ;(current-input-port i)
 ;(current-output-port o)
-;(pp (publish "my-queue" "hello world"))
+;(pp (redis-publish "my-queue" "hello world"))
+;(current-input-port stdin)
+;(current-output-port stdout)
 
