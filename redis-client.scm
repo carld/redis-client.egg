@@ -46,20 +46,14 @@
   (lambda (x r c)
     (let ((command-proc (r (string->symbol(sprintf "redis-~A" (cadr x))))))
       `(define (,command-proc . args)
-                 (redis-write-command (current-output-port) ',(cadr x) args)
-                 (redis-read-response (current-input-port))) )))
+                 (redis-write-command ,(cadddr x) ',(cadr x) args)
+                 (redis-read-response ,(caddr x))) )))
 
 ; Example program:
 ;
-;(make-redis-function publish)
-;(define *redis-socket* 
-;  (socket-connect/ai (address-information "127.0.0.1" 6379 family: af/inet)))
-;(define-values (i o) (socket-i/o-ports *redis-socket*))
-;(define stdin (current-input-port))
-;(define stdout (current-output-port))
-;(current-input-port i)
-;(current-output-port o)
-;(pp (redis-publish "my-queue" "hello world"))
-;(current-input-port stdin)
-;(current-output-port stdout)
+(define *redis-socket* 
+  (socket-connect/ai (address-information "127.0.0.1" 6379 family: af/inet)))
+(define-values (in-port out-port) (socket-i/o-ports *redis-socket*))
+(make-redis-function publish in-port out-port)
+(pp (redis-publish "my-queue" "hello world"))
 
