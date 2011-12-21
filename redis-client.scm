@@ -51,9 +51,9 @@
 
 ; Example program:
 ;
-(define *redis-socket* 
-  (socket-connect/ai (address-information "127.0.0.1" 6379 family: af/inet)))
-(define-values (in-port out-port) (socket-i/o-ports *redis-socket*))
-(make-redis-function publish in-port out-port)
-(pp (redis-publish "my-queue" "hello world"))
+;(define *redis-socket* 
+;  (socket-connect/ai (address-information "127.0.0.1" 6379 family: af/inet)))
+;(define-values (in-port out-port) (socket-i/o-ports *redis-socket*))
+;(make-redis-function publish in-port out-port)
+;(pp (redis-publish "my-queue" "hello world"))
 
