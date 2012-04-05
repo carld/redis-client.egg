@@ -1,4 +1,4 @@
-(include "../redis-client.scm")
+(require-library redis-client)
 
 (define (test a b)
   (pp a)
