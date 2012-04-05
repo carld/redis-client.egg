@@ -153,8 +153,11 @@
 (define *redis-socket* '())
 
 (define (redis-connect host port)
-  (set! *redis-socket* (socket-connect/ai (address-information "127.0.0.1" 6379 family: af/inet)))
-  (define-values (in-port out-port) (socket-i/o-ports *redis-socket*))
+  (set! *redis-socket* 
+    (socket-connect/ai 
+      (address-information host port family: af/inet)))
+  (define-values (in-port out-port) 
+                 (socket-i/o-ports *redis-socket*))
   (redis-in-port in-port)
   (redis-out-port out-port)
   (and (port? (redis-in-port)) (port? (redis-out-port))))
