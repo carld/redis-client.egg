@@ -49,6 +49,16 @@
                  (redis-write-command ,(cadddr x) ',(cadr x) args)
                  (redis-read-response ,(caddr x))) )))
 
+(define-syntax make-redis-parameter-function
+  (lambda (x r c)
+    (let ((command-proc (r (string->symbol(sprintf "redis-~A" (cadr x))))))
+      `(define (,command-proc . args)
+         (redis-write-command (redis-out-port) ',(cadr x) args)
+         (redis-read-response (redis-in-port))))))
+
+(define redis-in-port (make-parameter #f))
+(define redis-out-port (make-parameter #f))
+
 ; Example program:
 ;
 ;(define *redis-socket* 
@@ -56,4 +66,15 @@
 ;(define-values (in-port out-port) (socket-i/o-ports *redis-socket*))
 ;(make-redis-function publish in-port out-port)
 ;(pp (redis-publish "my-queue" "hello world"))
+
+; Example program:
+;
+;(define *redis-socket*
+;  (socket-connect/ai (address-information "127.0.0.1" 6379 family: af/inet)))
+;(define-values (in-port out-port) (socket-i/o-ports *redis-socket*))
+;(redis-in-port in-port)
+;(redis-out-port out-port)
+;(make-redis-parameter-function publish)
+;(pp (redis-publish "my-queue" "hello world"))
+
 
