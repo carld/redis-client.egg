@@ -5,14 +5,12 @@
   (if (not (equal? a b))
       (error (sprintf "Failed test: ~A" a))))
 
-(define client (make-redis-client "127.0.0.1" 6379))
-
-(test (client 'ping) 
+(redis-connect "127.0.0.1" 6379)
+(test (redis-ping) 
       '("PONG"))
-(test (client 'lpush "scheme-test" "1234") 
+(test (redis-lpush "scheme-test" "1234") 
       '("1"))
-(test (client 'rpop "scheme-test") 
+(test (redis-rpop "scheme-test") 
       '("1234"))
 
-(client 'close)
 
