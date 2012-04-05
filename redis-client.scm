@@ -56,6 +56,13 @@
          (redis-write-command (redis-out-port) ',(cadr x) args)
          (redis-read-response (redis-in-port))))))
 
+(define-syntax map-make-redis-parameter-function
+  (syntax-rules ()
+    ((_ (fn ...)) (begin (make-redis-parameter-function fn) ...))))
+
+(map-make-redis-parameter-function
+  (list lpush rpop brpop subscribe publish))
+
 (define redis-in-port (make-parameter #f))
 (define redis-out-port (make-parameter #f))
 
@@ -74,7 +81,6 @@
 ;(define-values (in-port out-port) (socket-i/o-ports *redis-socket*))
 ;(redis-in-port in-port)
 ;(redis-out-port out-port)
-;(make-redis-parameter-function publish)
 ;(pp (redis-publish "my-queue" "hello world"))
 
 
