@@ -1,0 +1,19 @@
+Redis client library for chicken scheme
+---------------------------------------
+
+To install, from the directory containing redis-client.setup:
+
+  chicken-install -s -test
+
+To uninstall:
+
+  chicken-uninstall redis-client
+
+Example program:
+
+  (require-library redis-client)
+
+  (pp (redis-connect "127.0.0.1" 6379))
+  (pp (redis-publish "my-channel" "hello world"))
+  (pp (redis-ping))
+
