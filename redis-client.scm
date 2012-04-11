@@ -32,8 +32,8 @@
   (lambda (x r c)
     (let ((command-proc (r (string->symbol(sprintf "redis-~A" (cadr x))))))
       `(define (,command-proc . args)
-         (redis-write-command (redis-out-port) ',(cadr x) args)
-         (redis-read-response (redis-in-port))))))
+         (redis-write-command (*redis-out-port*) ',(cadr x) args)
+         (redis-read-response (*redis-in-port*))))))
 
 (define-syntax map-make-redis-parameter-function
   (syntax-rules ()
@@ -147,8 +147,8 @@
     slaveof
     config))
 
-(define redis-in-port (make-parameter #f))
-(define redis-out-port (make-parameter #f))
+(define *redis-in-port* (make-parameter #f))
+(define *redis-out-port* (make-parameter #f))
 
 (define *redis-socket* '())
 
@@ -159,9 +159,9 @@
   (set! (so-keep-alive? *redis-socket*) #t)
   (define-values (in-port out-port)
                  (socket-i/o-ports *redis-socket*))
-  (redis-in-port in-port)
-  (redis-out-port out-port)
-  (and (port? (redis-in-port)) (port? (redis-out-port))))
+  (*redis-in-port* in-port)
+  (*redis-out-port* out-port)
+  (and (port? (*redis-in-port*)) (port? (*redis-out-port*))))
 
 ; Example program:
 ;
