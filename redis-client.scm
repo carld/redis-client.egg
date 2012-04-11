@@ -156,7 +156,8 @@
   (set! *redis-socket* 
     (socket-connect/ai 
       (address-information host port family: af/inet)))
-  (define-values (in-port out-port) 
+  (set! (so-keep-alive? *redis-socket*) #t)
+  (define-values (in-port out-port)
                  (socket-i/o-ports *redis-socket*))
   (redis-in-port in-port)
   (redis-out-port out-port)
