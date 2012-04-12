@@ -1,6 +1,10 @@
 ; chicken-scheme redis-client
 ; Copyright (C) 2011 A. Carl Douglas
+(module redis-client *
+(import chicken scheme extras)
 (use socket)
+(begin-for-syntax
+  (import chicken))
 
 (define (redis-write-command port command args)
   (fprintf port "*~A\r\n$~A\r\n~A\r\n~A~!" 
@@ -30,7 +34,7 @@
 
 (define-syntax make-redis-parameter-function
   (lambda (x r c)
-    (let ((command-proc (r (string->symbol(sprintf "redis-~A" (cadr x))))))
+    (let ((command-proc (string->symbol(sprintf "redis-~A" (cadr x)))))
       `(define (,command-proc . args)
          (redis-write-command (*redis-out-port*) ',(cadr x) args)
          (redis-read-response (*redis-in-port*))))))
@@ -162,6 +166,8 @@
   (*redis-in-port* in-port)
   (*redis-out-port* out-port)
   (and (port? (*redis-in-port*)) (port? (*redis-out-port*))))
+
+)
 
 ; Example program:
 ;

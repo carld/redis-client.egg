@@ -1,5 +1,6 @@
-(compile -s redis-client.scm)
+(compile -s -d0 -O3 redis-client.scm -j redis-client)
+(compile -s -d0 -O3 redis-client.import.scm)
 (install-extension
   'redis-client
-  '("redis-client.so")
+  '("redis-client.so" "redis-client.import.so")
   '((version "0.2")))

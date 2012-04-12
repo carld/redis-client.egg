@@ -1,4 +1,4 @@
-(require-library redis-client)
+(use redis-client)
 
 (define (test a b)
   (pp a)
