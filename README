@@ -11,7 +11,7 @@ To uninstall:
 
 Example program:
 
-  (require-library redis-client)
+  (use redis-client)
 
   (pp (redis-connect "127.0.0.1" 6379))
   (pp (redis-publish "my-channel" "hello world"))
