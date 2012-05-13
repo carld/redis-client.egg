@@ -1,5 +1,5 @@
 ; Usage:
-;   csi subscriber.scm my-channel
+;   csi -s subscriber.scm my-channel
 (use srfi-1 redis-client)
 
 (redis-connect "127.0.0.1" 6379)

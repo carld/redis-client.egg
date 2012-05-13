@@ -6,11 +6,15 @@
 (begin-for-syntax
   (import chicken))
 
+(define *redis-in-port* (make-parameter #f))
+(define *redis-out-port* (make-parameter #f))
+(define *redis-socket* '())
+
 (define (redis-write-command port command args)
   (fprintf port "*~A\r\n$~A\r\n~A\r\n~A~!" 
             (+ 1 (length args))
-            (string-length (symbol->string command))
-            (symbol->string command)
+            (string-length command)
+            command
             (apply string-append 
               (map (lambda(arg)
                      (sprintf "$~A\r\n~A\r\n" (string-length arg) arg)) args))))
@@ -32,129 +36,125 @@
                    (else  (error "unrecognised prefix" ch (read-line port)))))))))
             (parse 1 '())))
 
-(define-syntax make-redis-parameter-function
-  (lambda (x r c)
-    (let ((command-proc (string->symbol(sprintf "redis-~A" (cadr x)))))
-      `(define (,command-proc . args)
-         (redis-write-command (*redis-out-port*) ',(cadr x) args)
-         (redis-read-response (*redis-in-port*))))))
-
 (define-syntax map-make-redis-parameter-function
-  (syntax-rules ()
-    ((_ (fn ...)) (begin (make-redis-parameter-function fn) ...))))
+  (ir-macro-transformer
+    (lambda (x i c)
+      `(begin
+         ,@(map (lambda(f)
+              `(define (,f . a)
+                 (redis-write-command (*redis-out-port*)
+                                       ,(cadr (string-split (symbol->string (i f)) "-")) a)
+                 (redis-read-response (*redis-in-port*))))
+             (cadr x))))))
 
 (map-make-redis-parameter-function
-  (list 
-    ping
-    quit
-    auth
-    exists
-    del
-    type
-    keys
-    randomkey
-    rename
-    renamenx
-    dbsize
-    expire
-    persist
-    ttl
-    select
-    move
-    flushdb
-    flushall
-    set
-    get
-    getset
-    setnx
-    setex
-    setbit
-    mset
-    msetnx
-    mget
-    incr
-    incrby
-    decr
-    decrby
-    append
-    substr
-    rpush
-    lpush
-    llen
-    lrange
-    ltrim
-    lindex
-    lset
-    lrem
-    lpop
-    rpop
-    blpop
-    brpop
-    rpoplpush
-    brpoplpush
-    sadd
-    srem
-    spop
-    smove
-    scard
-    sismember
-    sinter
-    sinterstore
-    sunion
-    sunionstore
-    sdiff
-    sdiffstore
-    smembers
-    srandmember
-    zadd
-    zrem
-    zincrby
-    zrank
-    zrevrank
-    zrange
-    zrevrange
-    zrangebyscore
-    zcount
-    zcard
-    zscore
-    zremrangebyrank
-    zremrangebyscore
-    zunionstore
-    zinterstore
-    hset
-    hget
-    hmget
-    hmset
-    hincrby
-    hexists
-    hdel
-    hlen
-    hkeys
-    hvals
-    hgetall
-    sort
-    multi
-    exec
-    discard
-    watch
-    unwatch
-    subscribe
-    unsubscribe
-    publish
-    save
-    bgsave
-    lastsave
-    shutdown
-    bgrewriteaof
-    info
-    monitor
-    slaveof
-    config))
-
-(define *redis-in-port* (make-parameter #f))
-(define *redis-out-port* (make-parameter #f))
-
-(define *redis-socket* '())
+  (
+    redis-ping
+    redis-quit
+    redis-auth
+    redis-exists
+    redis-del
+    redis-type
+    redis-keys
+    redis-randomkey
+    redis-rename
+    redis-renamenx
+    redis-dbsize
+    redis-expire
+    redis-persist
+    redis-ttl
+    redis-select
+    redis-move
+    redis-flushdb
+    redis-flushall
+    redis-set
+    redis-get
+    redis-getset
+    redis-setnx
+    redis-setex
+    redis-setbit
+    redis-mset
+    redis-msetnx
+    redis-mget
+    redis-incr
+    redis-incrby
+    redis-decr
+    redis-decrby
+    redis-append
+    redis-substr
+    redis-rpush
+    redis-lpush
+    redis-llen
+    redis-lrange
+    redis-ltrim
+    redis-lindex
+    redis-lset
+    redis-lrem
+    redis-lpop
+    redis-rpop
+    redis-blpop
+    redis-brpop
+    redis-rpoplpush
+    redis-brpoplpush
+    redis-sadd
+    redis-srem
+    redis-spop
+    redis-smove
+    redis-scard
+    redis-sismember
+    redis-sinter
+    redis-sinterstore
+    redis-sunion
+    redis-sunionstore
+    redis-sdiff
+    redis-sdiffstore
+    redis-smembers
+    redis-srandmember
+    redis-zadd
+    redis-zrem
+    redis-zincrby
+    redis-zrank
+    redis-zrevrank
+    redis-zrange
+    redis-zrevrange
+    redis-zrangebyscore
+    redis-zcount
+    redis-zcard
+    redis-zscore
+    redis-zremrangebyrank
+    redis-zremrangebyscore
+    redis-zunionstore
+    redis-zinterstore
+    redis-hset
+    redis-hget
+    redis-hmget
+    redis-hmset
+    redis-hincrby
+    redis-hexists
+    redis-hdel
+    redis-hlen
+    redis-hkeys
+    redis-hvals
+    redis-hgetall
+    redis-sort
+    redis-multi
+    redis-exec
+    redis-discard
+    redis-watch
+    redis-unwatch
+    redis-subscribe
+    redis-unsubscribe
+    redis-publish
+    redis-save
+    redis-bgsave
+    redis-lastsave
+    redis-shutdown
+    redis-bgrewriteaof
+    redis-info
+    redis-monitor
+    redis-slaveof
+    redis-config
+    ))
 
 (define (redis-connect host port)
   (set! *redis-socket* 
