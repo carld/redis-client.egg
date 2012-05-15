@@ -50,6 +50,8 @@
 (map-make-redis-parameter-function
   (
     redis-ping
+    redis-echo
+    redis-strlen
     redis-quit
     redis-auth
     redis-exists
