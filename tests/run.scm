@@ -2,10 +2,23 @@
 
 (define (test a b)
   (pp a)
-  (if (not (equal? a b))
-      (error (sprintf "Failed test: ~S != ~S" a b))))
+  (if (procedure? b)
+    (b a)
+    (if (not (equal? a b))
+      (error (sprintf "Failed test: ~S != ~S" a b)))))
 
 (redis-connect "127.0.0.1" 6379)
+
+(test (redis-write-command (*redis-out-port*) "ECHO" (list "Hello, World!"))
+      (lambda(x)#t))
+(test (redis-read-response (*redis-in-port*))
+      '("Hello, World!"))
+
+(test (redis-subscribe "test-channel")
+      '("1"))
+(test (redis-unsubscribe "test-channel")
+      '("0"))
+
 (test (redis-flushall)
       '("OK"))
 (test (redis-ping) 
