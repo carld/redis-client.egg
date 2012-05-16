@@ -43,7 +43,7 @@
          ,@(map (lambda(f)
               `(define (,f . a)
                  (redis-write-command (*redis-out-port*)
-                                       ,(cadr (string-split (symbol->string (i f)) "-")) a)
+                                       ,(string-upcase (cadr (string-split (symbol->string (i f)) "-"))) a)
                  (redis-read-response (*redis-in-port*))))
              (cadr x))))))
 
