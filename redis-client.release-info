@@ -2,3 +2,4 @@
 (uri targz "https://github.com/carld/{egg-name}.egg/tarball/{egg-release}")
 (release "0.3")
 (release "0.4")
+(release "0.5")
