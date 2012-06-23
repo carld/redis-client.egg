@@ -72,10 +72,14 @@
     (lambda (x i c)
       `(begin
          ,@(map (lambda(f)
-              `(define (,f . a)
-                 (redis-write-command (*redis-out-port*)
-                                       ,(string-upcase (cadr (string-split (symbol->string (i f)) "-"))) a)
-                 (redis-read-response (*redis-in-port*))))
+             `(define (,f . a)
+                (redis-write-command
+                  (*redis-out-port*)
+                  ,(string-upcase
+                     (cadr
+                       (string-split (symbol->string (i f)) "-"))) a)
+                (redis-read-response
+                  (*redis-in-port*))))
              (cadr x))))))
 
 (map-make-redis-parameter-function
