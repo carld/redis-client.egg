@@ -6,9 +6,9 @@
 (redis-subscribe (last (command-line-arguments)))
 
 (define (run-loop thunk)
-  (let ((response (redis-read-response (*redis-in-port*))))
-     (thunk response))
-  (run-loop thunk))
+  (let loop ()
+     (thunk (redis-read-response (*redis-in-port*)))
+     (loop)))
 
 (run-loop 
   (lambda(r)
