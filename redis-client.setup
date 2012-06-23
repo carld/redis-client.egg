@@ -3,4 +3,4 @@
 (install-extension
   'redis-client
   '("redis-client.so" "redis-client.import.so")
-  '((version "0.6")))
+  '((version "0.7")))
