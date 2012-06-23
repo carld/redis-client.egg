@@ -20,21 +20,20 @@
                      (sprintf "$~A\r\n~A\r\n" (string-length arg) arg)) args))))
 
 (define (redis-read-response port)
-  (letrec ((parse (lambda(argc args)
-             (if (= argc 0)
-               args
-               (let ((ch (read-char port)))
-                 (case ch
-                   ((#\+) (list (read-line port)))
-                   ((#\*) (parse (string->number (read-line port)) args))
-                   ((#\$) (parse (- argc 1)
-                            (append args 
-                              (list (read-string (string->number (read-line port)) port)))))
-                   ((#\:)       (list (read-line port)))
-                   ((#\return)  (parse argc args))
-                   ((#\newline) (parse argc args))
-                   (else  (error "unrecognised prefix" ch (read-line port)))))))))
-            (parse 1 '())))
+  (let parse ((argc 1) (args '()))
+       (if (= argc 0)
+          args
+          (let ((ch (read-char port)))
+               (case ch
+                 ((#\+) (list (read-line port)))
+                 ((#\*) (parse (string->number (read-line port)) args))
+                 ((#\$) (parse (- argc 1)
+                          (append args 
+                            (list (read-string (string->number (read-line port)) port)))))
+                 ((#\:)       (list (read-line port)))
+                 ((#\return)  (parse argc args))
+                 ((#\newline) (parse argc args))
+                 (else (error "unrecognised prefix" ch (read-line port))))))))
 
 (define-syntax map-make-redis-parameter-function
   (ir-macro-transformer
