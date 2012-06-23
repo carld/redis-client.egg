@@ -1,4 +1,6 @@
-(use redis-client)
+(use redis-client socket)
+
+(socket-receive-timeout 3000)
 
 (define (test a b)
   (pp a)
