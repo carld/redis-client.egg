@@ -20,20 +20,43 @@
                      (sprintf "$~A\r\n~A\r\n" (string-length arg) arg)) args))))
 
 (define (redis-read-response port)
-  (let parse ((argc 1) (args '()))
-       (if (= argc 0)
-          args
-          (let ((ch (read-char port)))
-               (case ch
-                 ((#\+) (list (read-line port)))
-                 ((#\*) (parse (string->number (read-line port)) args))
-                 ((#\$) (parse (- argc 1)
-                          (append args 
-                            (list (read-string (string->number (read-line port)) port)))))
-                 ((#\:)       (list (read-line port)))
-                 ((#\return)  (parse argc args))
-                 ((#\newline) (parse argc args))
-                 (else (error "unrecognised prefix" ch (read-line port))))))))
+  (letrec ((argc 1)(args '())
+           (update-args!
+             (lambda (a) (set! args (append args (list a)))))
+           (single-line 
+             (lambda () (read-line port)))
+           (single-line-number
+             (lambda () (string->number (single-line))))
+           (multi-bulk
+             (lambda () (single-line-number)))
+           (bulk
+             (lambda () (read-string (single-line-number) port)))
+           (next-line
+             (lambda () (if (= argc (length args))
+                          args
+                          (prefix))))
+           (prefix
+             (lambda ()
+               (let ((ch (read-char port)))
+                 (case ch
+                   ((#\+) (begin       ; single line reply
+                            (update-args! (single-line))
+                            (next-line)))
+                   ((#\-) (begin       ; error message
+                            (set! args (single-line))
+                            (next-line)))
+                   ((#\:) (begin       ; integer number
+                            (update-args! (single-line-number))
+                            (next-line)))
+                   ((#\*) (begin       ; multi-bulk
+                            (set! argc (multi-bulk))
+                            (next-line)))
+                   ((#\$) (begin       ; bulk
+                            (update-args! (bulk))
+                            (read-string 2 port)
+                            (next-line)))
+                   (else (error "unrecognised prefix" ch )))))))
+    (prefix)))
 
 (define-syntax map-make-redis-parameter-function
   (ir-macro-transformer
