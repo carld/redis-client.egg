@@ -11,13 +11,20 @@
 (define *redis-socket* '())
 
 (define (redis-write-command port command args)
-  (fprintf port "*~A\r\n$~A\r\n~A\r\n~A~!" 
-            (+ 1 (length args))
-            (string-length command)
-            command
-            (apply string-append 
-              (map (lambda(arg)
-                     (sprintf "$~A\r\n~A\r\n" (string-length arg) arg)) args))))
+  (letrec ((bulk
+             (lambda (arg) 
+               (sprintf "$~A\r\n~A\r\n" (string-length arg) arg)))
+           (multi-bulk
+             (lambda ()
+               (apply string-append (map bulk args))))
+           (format-command
+             (lambda ()
+               (sprintf "*~A\r\n$~A\r\n~A\r\n~A~!"
+                  (+ 1 (length args))
+                  (string-length command)
+                  command
+                  (multi-bulk)))))
+    (fprintf port (format-command))))
 
 (define (redis-read-response port)
   (letrec ((argc 1)(args '())
