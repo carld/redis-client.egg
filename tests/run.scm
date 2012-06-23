@@ -89,6 +89,7 @@
       '("key"))
 (test (redis-hlen "hash1")
       '(1))
+(test (redis-blpop "list1" "1")
+      '())
 (test (redis-quit)
       '("OK"))
-

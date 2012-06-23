@@ -37,11 +37,13 @@
            (multi-bulk
              (lambda () (single-line-number)))
            (bulk
-             (lambda () (read-string (single-line-number) port)))
+             (lambda () (let ((n (single-line-number)))
+                          (cond ((equal? n -1)   '())
+                                (else (read-string n port))))))
            (next-line
-             (lambda () (if (= argc (length args))
-                          args
-                          (prefix))))
+             (lambda () (cond ((equal? argc (length args))  args)
+                              ((equal? argc -1)  '())
+                              (else (prefix)))))
            (prefix
              (lambda ()
                (let ((ch (read-char port)))
