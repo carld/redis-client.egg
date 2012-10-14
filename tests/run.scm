@@ -81,6 +81,8 @@
       '(1))
 (test (redis-hget "hash1" "key")
       '("val"))
+(test (redis-hget "hash1" "nokey")
+      '(()))
 (test (redis-hgetall "hash1")
       '("key" "val"))
 (test (redis-hexists "hash1" "key")

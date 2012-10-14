@@ -39,7 +39,9 @@
            (bulk
              (lambda () (let ((n (single-line-number)))
                           (cond ((equal? n -1)   '())
-                                (else (read-string n port))))))
+                                (else (let ((arg (read-string n port)))
+                                         (read-string 2 port)
+                                          arg))))))
            (next-line
              (lambda () (cond ((equal? argc (length args))  args)
                               ((equal? argc -1)  '())
@@ -62,7 +64,6 @@
                             (next-line)))
                    ((#\$) (begin       ; bulk
                             (update-args! (bulk))
-                            (read-string 2 port)
                             (next-line)))
                    (else (error "unrecognised prefix" ch )))))))
     (prefix)))
