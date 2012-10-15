@@ -85,113 +85,135 @@
 
 (map-make-redis-parameter-function
   (
-    redis-ping
-    redis-echo
-    redis-strlen
-    redis-quit
-    redis-auth
-    redis-exists
+    ;; Generic
     redis-del
-    redis-type
+    redis-expire
+    redis-expireat
     redis-keys
+    redis-move
+    redis-persist
     redis-randomkey
     redis-rename
     redis-renamenx
-    redis-dbsize
-    redis-expire
-    redis-persist
+    redis-sort
     redis-ttl
-    redis-select
-    redis-move
-    redis-flushdb
-    redis-flushall
-    redis-set
-    redis-get
-    redis-getset
-    redis-setnx
-    redis-setex
-    redis-setbit
-    redis-mset
-    redis-msetnx
-    redis-mget
-    redis-incr
-    redis-incrby
+    redis-type
+    ;; String
+    redis-append
     redis-decr
     redis-decrby
-    redis-append
+    redis-get
+    redis-getbit
+    redis-getset
+    redis-incr
+    redis-incrby
+    redis-mget
+    redis-mset
+    redis-msetnx
+    redis-set
+    redis-setbit
+    redis-setex
+    redis-setnx
+    redis-setrange
+    redis-strlen
     redis-substr
-    redis-rpush
-    redis-lpush
-    redis-llen
-    redis-lrange
-    redis-ltrim
-    redis-lindex
-    redis-lset
-    redis-lrem
-    redis-lpop
-    redis-rpop
+    ;; List
     redis-blpop
     redis-brpop
-    redis-rpoplpush
     redis-brpoplpush
+    redis-lindex
+    redis-linsert
+    redis-llen
+    redis-lpop
+    redis-lpush
+    redis-lpushx
+    redis-lrange
+    redis-lrem
+    redis-lset
+    redis-ltrim
+    redis-rpop
+    redis-rpoplpush
+    redis-rpush
+    redis-rpushx
+    ;; Set
     redis-sadd
-    redis-srem
-    redis-spop
-    redis-smove
     redis-scard
-    redis-sismember
-    redis-sinter
-    redis-sinterstore
-    redis-sunion
-    redis-sunionstore
     redis-sdiff
     redis-sdiffstore
+    redis-sinter
+    redis-sinterstore
+    redis-sismember
     redis-smembers
+    redis-smove
+    redis-spop
     redis-srandmember
+    redis-srem
+    redis-sunion
+    redis-sunionstore
+    ;; Sorted set
     redis-zadd
-    redis-zrem
-    redis-zincrby
-    redis-zrank
-    redis-zrevrank
-    redis-zrange
-    redis-zrevrange
-    redis-zrangebyscore
-    redis-zcount
     redis-zcard
-    redis-zscore
+    redis-zcount
+    redis-zincrby
+    redis-zinterstore
+    redis-zrange
+    redis-zrangebyscore
+    redis-zrank
+    redis-zrem
     redis-zremrangebyrank
     redis-zremrangebyscore
+    redis-zrevrange
+    redis-zrevrangebyscore
+    redis-zrevrank
+    redis-zscore
     redis-zunionstore
-    redis-zinterstore
-    redis-hset
+    ;; Hash
+    redis-hdel
+    redis-hexists
     redis-hget
+    redis-hgetall
+    redis-hincrby
+    redis-hkeys
+    redis-hlen
     redis-hmget
     redis-hmset
-    redis-hincrby
-    redis-hexists
-    redis-hdel
-    redis-hlen
-    redis-hkeys
+    redis-hset
+    redis-hsetnx
     redis-hvals
-    redis-hgetall
-    redis-sort
-    redis-multi
-    redis-exec
-    redis-discard
-    redis-watch
-    redis-unwatch
+    ;; Publish/Subscribe
+    redis-psubscribe
+    redis-publish
+    redis-punsubscribe
     redis-subscribe
     redis-unsubscribe
-    redis-publish
-    redis-save
-    redis-bgsave
-    redis-lastsave
-    redis-shutdown
+    ;; Transactions
+    redis-discard
+    redis-exec
+    redis-multi
+    redis-unwatch
+    redis-watch
+    ;; Connection
+    redis-auth
+    redis-echo
+    redis-ping
+    redis-quit
+    redis-select
+    ;; Server
     redis-bgrewriteaof
-    redis-info
-    redis-monitor
-    redis-slaveof
+    redis-bgsave
     redis-config
+    redis-dbsize
+    redis-debug
+    redis-exists
+    redis-flushall
+    redis-flushdb
+    redis-info
+    redis-lastsave
+    redis-monitor
+    redis-save
+    redis-shutdown
+    redis-slaveof
+    redis-sync
     ))
 
 (define (redis-connect host port)
