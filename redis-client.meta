@@ -2,4 +2,5 @@
  (category db)
  (depends socket)
  (author "A. Carl Douglas")
- (synopsis "A redis client library."))
+ (synopsis "A redis client library.")
+ (files "LICENSE" "README" "examples/push-pop.scm" "examples/subscriber.scm" "redis-client.meta" "redis-client.release-info" "redis-client.scm" "redis-client.setup" "tests/run.scm"))
