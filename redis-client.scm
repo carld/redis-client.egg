@@ -68,6 +68,18 @@
                    (else (error "unrecognised prefix" ch )))))))
     (prefix)))
 
+(define-syntax redis-transaction
+  (ir-macro-transformer
+    (lambda (x i c)
+      `(handle-exceptions
+         exn
+        (begin
+          (redis-discard)
+          (abort exn))
+        (redis-multi)
+        ,@(cdr x)
+        (redis-exec)))))
+ 
 (define-syntax map-make-redis-parameter-function
   (ir-macro-transformer
     (lambda (x i c)
