@@ -1,5 +1,5 @@
-(repo git "git://github.com/carld/{egg-name}.egg.git")
-(uri targz "https://github.com/carld/{egg-name}.egg/tarball/{egg-release}")
+(repo git "git@bitbucket.org:carldouglas/{egg-name}.egg.git")
+(uri targz "https://bitbucket.org/carldouglas/{egg-name}.egg/get/{egg-release}.tar.gz")
 (release "0.3")
 (release "0.4")
 (release "0.5")
