@@ -26,12 +26,19 @@
                   (multi-bulk)))))
     (fprintf port (format-command))))
 
+(define (redis-read-line port)
+  (let loop ((chars (list ))
+             (char (read-char port)))
+      (if (and (eq? char #\r) (eq? (read-char port) #\n))
+         (list->string chars)
+         (loop (append chars (list char)) (read-char port)))))
+
 (define (redis-read-response port)
   (letrec ((argc 1)(args '())
            (update-args!
              (lambda (a) (set! args (append args (list a)))))
            (single-line 
-             (lambda () (read-line port)))
+             (lambda () (redis-read-line port)))
            (single-line-number
              (lambda () (string->number (single-line))))
            (multi-bulk
